@@ -1,9 +1,16 @@
 const functions = require('firebase-functions');
+const { admin, firestore } = require('./util/admin');
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
 exports.helloWorld = functions.https.onRequest((req, res) => {
-  functions.logger.info('Hello logs!', { structuredData: true });
-  res.send('Hello from Firebase!');
+  firestore
+    .collection('users')
+    .get()
+    .then((snapshot) => {
+      snapshot.forEach((doc) => {
+        res.send({
+          id: doc.id,
+          data: doc.data(),
+        });
+      });
+    });
 });
