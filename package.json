@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "start": "firebase emulators:start --import=./emulators-data --export-on-exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Btwonu/movie-app-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Btwonu/movie-app-api/issues"
+  },
+  "homepage": "https://github.com/Btwonu/movie-app-api#readme"
+}
