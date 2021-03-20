@@ -6,6 +6,7 @@ const { admin, firestore } = require('./config/admin');
 const express = require('express');
 const app = express();
 
+// Init
 require('./config/express')(app);
 
 app.get('/', (req, res) => {
@@ -22,4 +23,4 @@ app.get('/', (req, res) => {
     });
 });
 
-exports.api = functions.https.onRequest(app);
+exports.api = functions.region('europe-west1').https.onRequest(app);
