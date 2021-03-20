@@ -1,7 +1,14 @@
+// Firebase
 const functions = require('firebase-functions');
 const { admin, firestore } = require('./util/admin');
 
-exports.helloWorld = functions.https.onRequest((req, res) => {
+// Server
+const express = require('express');
+const app = express();
+
+require('./config/express')(app);
+
+app.get('/', (req, res) => {
   firestore
     .collection('users')
     .get()
@@ -14,3 +21,5 @@ exports.helloWorld = functions.https.onRequest((req, res) => {
       });
     });
 });
+
+exports.api = functions.https.onRequest(app);
