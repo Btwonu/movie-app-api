@@ -1,6 +1,6 @@
 // Firebase
 const functions = require('firebase-functions');
-const { admin, firestore } = require('./util/admin');
+const { admin, firestore } = require('./config/admin');
 
 // Server
 const express = require('express');
