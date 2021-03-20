@@ -60,11 +60,12 @@
 - Should be able to register/login
 - Should have a profile and store liked movies
 - _Should be able to filter movies_
-
 - Should be able to list users
 - Should be able to add a user as friend
 - Should be able to see friend's liked movies
 - Should be able to suggest a movie to a friend
+- Should be able to add movies to a personal collection
+- Should be able to subscribe to other users' collections
 
 ## Pages
 
@@ -93,7 +94,10 @@
   - Express
   - fetch data from third-party APIs
 - Config
-  - import sdk config in functions
+  - initialize admin SDK in functions
 - Firestore
   - store data
 - Auth
+  - register with email
+  - register with providers
+  - trigged Firestore via authentication to store user data inside
