@@ -1,7 +1,8 @@
+// Dependancies
 const functions = require('firebase-functions');
-
 const axios = require('axios').default;
 
+// Constants
 const API_KEY = functions.config().tmdb.key;
 const BASE_URL = functions.config().tmdb.base_url;
 
@@ -16,7 +17,6 @@ const getMovies = async () => {
 
 const getPopular = async () => {
   let urlString = `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US`;
-  console.log('urlString', urlString);
 
   let movies = await axios.get(urlString);
   let moviesArr = extractMovieInfo(movies);
