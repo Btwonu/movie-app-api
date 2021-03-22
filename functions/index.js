@@ -11,7 +11,7 @@ const app = express();
 
 // Services
 const movieService = require('./services/movieService');
-const { validateSignupData } = require('./validators/auth');
+const { validateSignupData, validateLoginData } = require('./validators/auth');
 
 // Init
 require('./config/express')(app);
@@ -53,27 +53,51 @@ app.get('/movies/upcoming', (req, res) => {
 });
 
 // Auth routes
-app.post('/auth', (req, res) => {
-  const userData = {
-    email: req.body.email,
-    password: req.body.password,
-    confirmPassword: req.body.confirmPassword,
-  };
+app.post('/auth/register', (req, res) => {
+  let { email, password, confirmPassword } = req.body;
 
-  let { errors, valid } = validateSignupData(userData);
+  let { errors, valid } = validateSignupData(email, password, confirmPassword);
 
   if (!valid) return res.send(errors);
 
   firebase
     .auth()
-    .createUserWithEmailAndPassword(userData.email, userData.password)
+    .createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
-      let user = userCredential.user;
-      res.send(user);
+      return userCredential.user.getIdToken();
+    })
+    .then((token) => {
+      res.json({ token });
     })
     .catch((error) => {
       let errorCode = error.code;
       let errorMessage = error.message;
+    });
+});
+
+app.post('/auth/login', (req, res) => {
+  let { email, password } = req.body;
+
+  let { errors, valid } = validateLoginData(email, password);
+
+  if (!valid) return res.send(errors);
+
+  firebase
+    .auth()
+    .signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      return userCredential.user.getIdToken();
+    })
+    .then((token) => {
+      return res.json({ token });
+    })
+    .catch((err) => {
+      console.error(err);
+      // auth/wrong-password
+      // auth/user-not-user
+      return res
+        .status(403)
+        .json({ general: 'Wrong credentials, please try again' });
     });
 });
 
