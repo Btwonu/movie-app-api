@@ -5,11 +5,11 @@ const isEmail = (email) => {
 };
 
 const isEmpty = (string) => {
-  if (string.trim() === '') return true;
+  if (!string || string.trim() === '') return true;
   else return false;
 };
 
-const validateSignupData = (email, password, confirmPassword) => {
+const validateSignupData = (username, email, password, confirmPassword) => {
   let errors = {};
 
   if (isEmpty(email)) {
@@ -17,6 +17,10 @@ const validateSignupData = (email, password, confirmPassword) => {
   } else if (!isEmail(email)) {
     console.log('email wrong');
     errors.email = 'Must be a valid email address';
+  }
+
+  if (isEmpty(username)) {
+    errors.username = 'Must not be empty';
   }
 
   if (isEmpty(password)) errors.password = 'Must not be empty';

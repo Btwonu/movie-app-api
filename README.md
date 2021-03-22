@@ -25,13 +25,14 @@
 
     - User
 
-      - **handle** _string_ _required_ _unique_ _USER UID_
+      - **userId** _string_ _required_ _unique_ _USER UID_
       - **username** _string_ _required_ _unique_
       - **age** _number_
+      - **email** _string_ _required_ _unique_ _EMAIL_
       - **createdCollections** _array_ [ref: _Collection_]
       - **followedCollections** _array_ [ref: _Collection_]
       - **friends** _array_ [ref: _User_]
-      - **likedMovies**
+      - **likedMovies** _array_
       - **avatar**
 
     - Collection
