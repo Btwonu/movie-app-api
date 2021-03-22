@@ -141,4 +141,82 @@ app.post('/auth/login', (req, res) => {
     });
 });
 
+// Users routes
+app.get('/users', (req, res) => {
+  firestore
+    .collection('users')
+    .get()
+    .then((querySnapshot) => {
+      let docs = querySnapshot.docs;
+      let arrOfDocs = [];
+
+      for (let doc of docs) {
+        arrOfDocs.push(doc.data());
+      }
+
+      res.json(arrOfDocs);
+    });
+});
+
+app.get('/users/:username', (req, res) => {
+  firestore
+    .doc(`/users/${req.params.username}`)
+    .get()
+    .then((doc) => {
+      if (!doc.exists) {
+        res.json({ user: 'User does not exist' });
+      }
+
+      res.json(doc.data());
+    });
+});
+
+app.get('/users/:username/collections', (req, res) => {
+  firestore
+    .doc(`/users/${req.params.username}`)
+    .get()
+    .then((doc) => {
+      if (!doc.exists) {
+        res.json({ user: 'User does not exist' });
+      }
+
+      res.json(doc.data().createdCollections);
+    });
+});
+
+app.get('/users/users/:userId/friends', (req, res) => {
+  res.send(req.params.userId);
+});
+
+// Collections routes
+app.get('/collections', (req, res) => {
+  firestore
+    .collection('/collections')
+    .get()
+    .then((querySnapshot) => {
+      let docs = querySnapshot.docs;
+      let arrOfDocs = [];
+
+      for (let doc of docs) {
+        arrOfDocs.push(doc.data());
+      }
+
+      res.json(arrOfDocs);
+    });
+});
+
+app.post('/collections', (req, res) => {
+  let newCollection = {
+    title: req.body.title,
+    description: req.body.description,
+    movies: req.body.movies,
+  };
+
+  // Add a collection creator
+  firestore
+    .collection(`/collections`)
+    .add(newCollection)
+    .then((doc) => res.json(doc.id));
+});
+
 exports.api = functions.region('europe-west1').https.onRequest(app);
