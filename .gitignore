@@ -65,5 +65,9 @@ node_modules/
 # dotenv environment variables file
 .env
 
+# Firebase data
 emulators-data/
 data-backup/
+
+# Tasks
+TASKS.md
