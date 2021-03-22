@@ -86,15 +86,16 @@
 
 # Firebase
 
-- Hosting
-  - host React's build folder
-  - rewrite /api route to Functions
 - Functions
   - provide the API
   - Express
   - fetch data from third-party APIs
+- Hosting
+  - deploy function
+  - host front-end
 - Config
   - initialize admin SDK in functions
+  - initialize Firebase SDK in functions
 - Firestore
   - store data
 - Auth
