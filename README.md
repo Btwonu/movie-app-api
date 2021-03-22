@@ -71,18 +71,27 @@
 
 ### Movies
 
-- Popular
-- Top Rated
-- Upcoming
+- Popular - `/movies/popular`
+- Top Rated - `/movies/top-rated`
+- Upcoming - `/movies/upcoming`
+- Movie Details - `/movies/:movieId`
 
 ### Auth
 
-- Register
-- Login
+- Register - `/auth/register`
+- Login - `/auth/login`
 
 ### User
 
-- Users
+- Users - `/users`
+- Profile - `/users/:userId`
+- User Collections `/users/:userId/collections`
+- User Friends `/users/:userId/friends`
+
+### Collections
+
+- Collections - `/collections`
+- Collection Details - `/collections/:collectionId`
 
 # Firebase
 
