@@ -45,6 +45,33 @@ const getCategories = () => {
   });
 };
 
+const getPopular = async () => {
+  let urlString = `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US`;
+
+  let movies = await axios.get(urlString);
+  let moviesArr = extractMovieInfo(movies);
+
+  return moviesArr;
+};
+
+const getTopRated = async () => {
+  let urlString = `${BASE_URL}/movie/top_rated?api_key=${API_KEY}&language=en-US`;
+
+  let movies = await axios.get(urlString);
+  let moviesArr = extractMovieInfo(movies);
+
+  return moviesArr;
+};
+
+const getUpcoming = async () => {
+  let urlString = `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US`;
+
+  let movies = await axios.get(urlString);
+  let moviesArr = extractMovieInfo(movies);
+
+  return moviesArr;
+};
+
 const getOne = async (id) => {
   let urlString = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`;
 
