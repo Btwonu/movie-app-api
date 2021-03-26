@@ -6,40 +6,51 @@ const axios = require('axios').default;
 const API_KEY = functions.config().tmdb.key;
 const BASE_URL = functions.config().tmdb.base_url;
 
-const getMovies = async () => {
-  let urlString = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=en-US&sort_by=popularity.desc`;
+const getMovies = async (category, page, limit) => {
+  let urlString = `${BASE_URL}/movie/${category}?api_key=${API_KEY}&language=en-US&page=${page}`;
 
   let movies = await axios.get(urlString);
-  let moviesArr = extractMovieInfo(movies);
+  let moviesArr = extractMovieInfo(movies, category);
+
+  if (limit) {
+    return moviesArr.slice(0, limit);
+  }
 
   return moviesArr;
 };
 
-const getPopular = async () => {
-  let urlString = `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US`;
+const getCategories = () => {
+  let promises = [
+    getMovies('popular', null, 4),
+    getMovies('top_rated', null, 4),
+    getMovies('upcoming', null, 4),
+  ];
 
-  let movies = await axios.get(urlString);
-  let moviesArr = extractMovieInfo(movies);
+  const mapper = {
+    0: 'popular',
+    1: 'top_rated',
+    2: 'upcoming',
+  };
 
-  return moviesArr;
+  return Promise.all(promises).then((results) => {
+    return results.map((movies, index) => {
+      let category = mapper[index];
+
+      return {
+        name: category,
+        movies,
+        url: `/movies/categories/${category}`,
+      };
+    });
+  });
 };
 
-const getTopRated = async () => {
-  let urlString = `${BASE_URL}/movie/top_rated?api_key=${API_KEY}&language=en-US`;
+const getOne = async (id) => {
+  let urlString = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`;
 
-  let movies = await axios.get(urlString);
-  let moviesArr = extractMovieInfo(movies);
+  let movie = await axios.get(urlString);
 
-  return moviesArr;
-};
-
-const getUpcoming = async () => {
-  let urlString = `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US`;
-
-  let movies = await axios.get(urlString);
-  let moviesArr = extractMovieInfo(movies);
-
-  return moviesArr;
+  return movie.data;
 };
 
 function extractMovieInfo(movies) {
@@ -71,6 +82,8 @@ module.exports = {
   getPopular,
   getTopRated,
   getUpcoming,
+  getOne,
+  getCategories,
 };
 
 // poster_path

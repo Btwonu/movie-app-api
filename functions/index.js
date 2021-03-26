@@ -34,21 +34,26 @@ app.get('/', (req, res) => {
 });
 
 // Movie routes
-app.get('/movies/popular', async (req, res) => {
-  movieService.getPopular().then((movies) => {
+app.get('/movies', (req, res) => {
+  let { category, page, limit } = req.query;
+
+  if (!category) {
+    movieService.getCategories().then((results) => {
+      res.json(results);
+    });
+  }
+
+  console.log({ category });
+  movieService.getMovies(category, page, limit).then((movies) => {
     res.json(movies);
   });
 });
 
-app.get('/movies/top-rated', (req, res) => {
-  movieService.getTopRated().then((movies) => {
-    res.json(movies);
-  });
-});
+app.get('/movies/:movieId', (req, res) => {
+  let { movieId } = req.params;
 
-app.get('/movies/upcoming', (req, res) => {
-  movieService.getUpcoming().then((movies) => {
-    res.json(movies);
+  movieService.getOne(movieId).then((data) => {
+    res.json(data);
   });
 });
 
