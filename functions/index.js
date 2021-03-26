@@ -49,6 +49,24 @@ app.get('/movies', (req, res) => {
   });
 });
 
+app.get('/movies/popular', async (req, res) => {
+  movieService.getPopular().then((movies) => {
+    res.json(movies);
+  });
+});
+
+app.get('/movies/top_rated', (req, res) => {
+  movieService.getTopRated().then((movies) => {
+    res.json(movies);
+  });
+});
+
+app.get('/movies/upcoming', (req, res) => {
+  movieService.getUpcoming().then((movies) => {
+    res.json(movies);
+  });
+});
+
 app.get('/movies/:movieId', (req, res) => {
   let { movieId } = req.params;
 
