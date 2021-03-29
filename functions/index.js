@@ -20,17 +20,6 @@ app.get('/', (req, res) => {
   res.send({
     hello: 'hello',
   });
-  // firestore
-  //   .collection('users')
-  //   .get()
-  //   .then((snapshot) => {
-  //     snapshot.forEach((doc) => {
-  //       res.send({
-  //         id: doc.id,
-  //         data: doc.data(),
-  //       });
-  //     });
-  //   });
 });
 
 // Movie routes
@@ -221,11 +210,26 @@ app.get('/collections', (req, res) => {
       let arrOfDocs = [];
 
       for (let doc of docs) {
-        arrOfDocs.push(doc.data());
+        let collection = doc.data();
+
+        if (doc.data().creator) {
+          // this is the user reference
+          doc
+            .data()
+            .creator.get()
+            .then((creator) => {
+              collection.creatorProp = creator.data();
+              arrOfDocs.push(collection);
+            });
+        } else {
+          arrOfDocs.push(collection);
+        }
       }
 
-      res.json(arrOfDocs);
-    });
+      // I think this returns the results before creator has chance to be pushed
+      return Promise.all(arrOfDocs);
+    })
+    .then((results) => res.json(results));
 });
 
 app.post('/collections', (req, res) => {
