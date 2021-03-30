@@ -3,6 +3,8 @@ const { Router } = require('express');
 // Services
 const movieService = require('../services/movieService');
 
+const authMiddleware = require('../middleware/authMiddleware');
+
 const router = Router();
 
 // Movie routes

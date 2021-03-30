@@ -17,12 +17,12 @@ router.post('/register', (req, res) => {
     confirmPassword
   );
 
-  if (!valid) return res.send(errors);
+  if (!valid) return res.json(errors);
 
   let JWT, userId;
 
   firestore
-    .doc(`/users/${username}`)
+    .doc(`/users/${username.toLowerCase()}`)
     .get()
     .then((doc) => {
       if (doc.exists) {
@@ -52,13 +52,12 @@ router.post('/register', (req, res) => {
         likedMovies: [],
       };
 
-      return firestore.doc(`/users/${username}`).set(newUser);
+      return firestore.doc(`/users/${username.toLowerCase()}`).set(newUser);
     })
     .then(() => {
       return res.status(201).json({ JWT });
     })
     .catch((err) => {
-      console.log('in here:', err);
       if (err.code === 'auth/email-already-in-use') {
         return res.status(400).json({ email: 'Email is already is use' });
       } else {
@@ -74,7 +73,7 @@ router.post('/login', (req, res) => {
 
   let { errors, valid } = validateLoginData(email, password);
 
-  if (!valid) return res.send(errors);
+  if (!valid) return res.json(errors);
 
   firebase
     .auth()
@@ -82,8 +81,9 @@ router.post('/login', (req, res) => {
     .then((userCredential) => {
       return userCredential.user.getIdToken();
     })
-    .then((token) => {
-      return res.json({ token });
+    .then((JWT) => {
+      console.log('credential', JWT);
+      return res.json({ JWT });
     })
     .catch((err) => {
       console.error(err);
