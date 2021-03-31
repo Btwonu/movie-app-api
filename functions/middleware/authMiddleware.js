@@ -18,7 +18,7 @@ module.exports = (req, res, next) => {
     .verifyIdToken(token)
     .then((decodedToken) => {
       req.user = decodedToken;
-      console.log(req.user);
+      console.log('From authMiddleware:', req.user);
       return firestore
         .collection('users')
         .where('userId', '==', req.user.uid)

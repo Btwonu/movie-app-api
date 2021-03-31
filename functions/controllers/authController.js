@@ -6,6 +6,8 @@ const { validateSignupData, validateLoginData } = require('../validators/auth');
 
 const router = Router();
 
+const authService = require('../services/authService');
+
 // Auth routes
 router.post('/register', (req, res) => {
   let { username, email, password, confirmPassword } = req.body;
@@ -19,13 +21,14 @@ router.post('/register', (req, res) => {
 
   if (!valid) return res.json(errors);
 
-  let JWT, userId;
+  let JWT, userId, userInfo;
 
   firestore
-    .doc(`/users/${username.toLowerCase()}`)
+    .collection('users')
+    .where('username', '==', username.toLowerCase())
     .get()
-    .then((doc) => {
-      if (doc.exists) {
+    .then((data) => {
+      if (data.docs.length > 0) {
         return res
           .status(400)
           .json({ username: 'This username is already taken' });
@@ -35,14 +38,15 @@ router.post('/register', (req, res) => {
     })
     .then((userCredential) => {
       userId = userCredential.user.uid;
+
       return userCredential.user.getIdToken();
     })
     .then((token) => {
       JWT = token;
 
-      let newUser = {
+      userInfo = {
         userId,
-        username,
+        username: username.toLowerCase(),
         email,
         createdAt: new Date().toISOString(),
         avatar: '',
@@ -52,15 +56,16 @@ router.post('/register', (req, res) => {
         likedMovies: [],
       };
 
-      return firestore.doc(`/users/${username.toLowerCase()}`).set(newUser);
+      return firestore.doc(`/users/${userId}`).set(userInfo);
     })
     .then(() => {
-      return res.status(201).json({ JWT });
+      return res.status(201).json({ userInfo, JWT });
     })
     .catch((err) => {
       if (err.code === 'auth/email-already-in-use') {
         return res.status(400).json({ email: 'Email is already is use' });
       } else {
+        console.log(err);
         return res
           .status(500)
           .json({ general: 'Something went wrong, please try again' });
@@ -75,15 +80,22 @@ router.post('/login', (req, res) => {
 
   if (!valid) return res.json(errors);
 
+  let JWT, userId;
   firebase
     .auth()
     .signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
+      userId = userCredential.user.uid;
+
       return userCredential.user.getIdToken();
     })
-    .then((JWT) => {
-      console.log('credential', JWT);
-      return res.json({ JWT });
+    .then((token) => {
+      JWT = token;
+
+      return authService.getProfile(userId);
+    })
+    .then((userInfo) => {
+      res.json({ userInfo, JWT });
     })
     .catch((err) => {
       console.error(err);

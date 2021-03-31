@@ -4,6 +4,7 @@ const { admin, firestore } = require('../config/admin');
 const router = Router();
 
 const authMiddleware = require('../middleware/authMiddleware');
+const authService = require('../services/authService');
 
 // Users routes
 router.get('/', (req, res) => {
@@ -23,38 +24,10 @@ router.get('/', (req, res) => {
 });
 
 router.get('/profile', authMiddleware, (req, res) => {
-  let user = {};
-
-  firestore
-    .doc(`/users/${req.user.username.toLowerCase()}`)
-    .get()
-    .then((doc) => {
-      if (!doc.exists) {
-        res.json({ user: 'User does not exist' });
-      }
-
-      user = doc.data();
-      let collectionPromises = [];
-
-      // doc.data().createdCollections.forEach((collectionDocRef) => {
-      //   collectionDocRef.get().then((queryDocSnapshot) => {
-      //     let collection = queryDocSnapshot.data();
-      //     createdCollections.push(collection);
-      //   });
-      // });
-
-      doc.data().createdCollections.forEach((collectionDocRef) => {
-        collectionPromises.push(collectionDocRef.get());
-      });
-
-      return Promise.all(collectionPromises).then((resultsArr) => {
-        return resultsArr.map((queryDocSnapshot) => queryDocSnapshot.data());
-      });
-    })
-    .then((collectionsArr) => {
-      user.createdCollections = collectionsArr;
-      res.json(user);
-    });
+  authService
+    .getProfile(req.user.username)
+    .then((user) => res.json(user))
+    .catch((err) => res.json(err));
 });
 
 router.get('/:username/collections', (req, res) => {
