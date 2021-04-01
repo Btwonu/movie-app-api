@@ -23,6 +23,10 @@ router.get('/:collectionId', (req, res) => {
   console.log({ collectionId });
 
   // Get a single collection
+  collectionService
+    .getOneCollection(collectionId)
+    .then((collection) => res.json(collection))
+    .catch((err) => res.json({ err }));
 });
 
 router.get('/:collectionId/movies', (req, res) => {
@@ -36,12 +40,16 @@ router.get('/:collectionId/movies', (req, res) => {
     .catch((err) => res.json({ err }));
 });
 
-router.post('/:collectionId/movies', (req, res) => {
-  let { collectionId } = req.params;
+router.post('/:collectionId/movies/:movieId', (req, res) => {
+  let { collectionId, movieId } = req.params;
 
-  console.log({ collectionId });
+  console.log({ collectionId, movieId });
 
   // Update current collection movie array
+  collectionService
+    .addMovieToCollection()
+    .then((data) => res.json(data))
+    .catch((err) => res.json({ err }));
 });
 
 router.post('/', (req, res) => {

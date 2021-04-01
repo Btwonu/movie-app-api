@@ -28,6 +28,18 @@ const getAllCollections = async () => {
   return Promise.all(collectionsArray);
 };
 
+const getOneCollection = async (collectionId) => {
+  let queryDocSnapshot = await firestore
+    .doc(`/collections/${collectionId}`)
+    .get();
+
+  if (queryDocSnapshot.exists) {
+    return queryDocSnapshot.data();
+  } else {
+    throw "Collection doesn't exist";
+  }
+};
+
 const createCollection = () => {
   return true;
 };
@@ -44,11 +56,14 @@ const getCollectionMovies = async (collectionId) => {
   }
 };
 
-const addMovieToCollection = () => {};
+const addMovieToCollection = () => {
+  return { done: true };
+};
 
 module.exports = {
   getAllCollections,
   getCollectionMovies,
   addMovieToCollection,
   createCollection,
+  getOneCollection,
 };
