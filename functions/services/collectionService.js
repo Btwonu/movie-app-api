@@ -56,8 +56,24 @@ const getCollectionMovies = async (collectionId) => {
   }
 };
 
-const addMovieToCollection = () => {
-  return { done: true };
+const addMovieToCollection = async (collectionId, movieId) => {
+  let docRef = firestore.doc(`/collections/${collectionId}`);
+
+  let docSnapshot = await docRef.get();
+
+  if (!docSnapshot.exists) {
+    throw "Collection doesn't exist.";
+  }
+
+  let { movies } = docSnapshot.data();
+
+  if (movies.includes(movieId)) {
+    throw 'Movie already added.';
+  }
+
+  movies.push(movieId);
+
+  return docRef.set({ movies }, { merge: true });
 };
 
 module.exports = {

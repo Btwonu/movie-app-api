@@ -47,8 +47,8 @@ router.post('/:collectionId/movies/:movieId', (req, res) => {
 
   // Update current collection movie array
   collectionService
-    .addMovieToCollection()
-    .then((data) => res.json(data))
+    .addMovieToCollection(collectionId, movieId)
+    .then((data) => res.status(201).json({ written: true }))
     .catch((err) => res.json({ err }));
 });
 
