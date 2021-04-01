@@ -46,7 +46,7 @@ router.post('/register', (req, res) => {
 
       userInfo = {
         userId,
-        username: username.toLowerCase(),
+        username,
         email,
         createdAt: new Date().toISOString(),
         avatar: '',

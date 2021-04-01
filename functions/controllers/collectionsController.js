@@ -10,6 +10,7 @@ router.get('/', (req, res) => {
   collectionService
     .getAll()
     .then((data) => {
+      console.log('data', data);
       res.json(data);
     })
     .catch((err) => {
@@ -18,10 +19,12 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
+  let userId = 'AvJcedqhkSFRAjnho754sZRmZlTg';
   let newCollection = {
     title: req.body.title,
     description: req.body.description,
-    movies: req.body.movies,
+    movies: [],
+    creator: firestore.doc(`users/${userId}`),
   };
 
   // Add a collection creator

@@ -1,20 +1,29 @@
 const { firestore } = require('../config/admin');
 
-const getAll = () => {
-  return firestore
+const getAll = async () => {
+  let documents = await firestore
     .collection('/collections')
     .get()
-    .then((querySnapshot) => {
-      let docs = querySnapshot.docs;
-      let arrOfDocs = [];
+    .then((querySnapshot) => querySnapshot.docs);
 
-      for (let doc of docs) {
-        let collection = { collectionId: doc.id, ...doc.data() };
-        arrOfDocs.push(collection);
-      }
+  let collectionsArray = documents.map(async (queryDocSnapshot) => {
+    let collection = queryDocSnapshot.data();
 
-      return arrOfDocs;
-    });
+    let creator = await queryDocSnapshot
+      .data()
+      .creator.get()
+      .then((creatorSnapshot) => ({
+        userId: creatorSnapshot.data().userId,
+        username: creatorSnapshot.data().username,
+      }));
+
+    collection.collectionId = queryDocSnapshot.id;
+    collection.creator = creator;
+
+    return collection;
+  });
+
+  return Promise.all(collectionsArray);
 };
 
 const create = () => {};
