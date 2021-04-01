@@ -1,6 +1,8 @@
 const { firestore } = require('../config/admin');
 
-const getAll = async () => {
+const movieService = require('./movieService');
+
+const getAllCollections = async () => {
   let documents = await firestore
     .collection('/collections')
     .get()
@@ -26,9 +28,27 @@ const getAll = async () => {
   return Promise.all(collectionsArray);
 };
 
-const create = () => {};
+const createCollection = () => {
+  return true;
+};
+
+const getCollectionMovies = async (collectionId) => {
+  let queryDocSnapshot = await firestore
+    .doc(`/collections/${collectionId}`)
+    .get();
+
+  if (queryDocSnapshot.exists) {
+    return queryDocSnapshot.data().movies;
+  } else {
+    throw "Collection doesn't exist";
+  }
+};
+
+const addMovieToCollection = () => {};
 
 module.exports = {
-  getAll,
-  create,
+  getAllCollections,
+  getCollectionMovies,
+  addMovieToCollection,
+  createCollection,
 };

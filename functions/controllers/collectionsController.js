@@ -5,10 +5,9 @@ const collectionService = require('../services/collectionService');
 
 const router = Router();
 
-// Collections routes
 router.get('/', (req, res) => {
   collectionService
-    .getAll()
+    .getAllCollections()
     .then((data) => {
       console.log('data', data);
       res.json(data);
@@ -16,6 +15,33 @@ router.get('/', (req, res) => {
     .catch((err) => {
       res.json({ error: err });
     });
+});
+
+router.get('/:collectionId', (req, res) => {
+  let { collectionId } = req.params;
+
+  console.log({ collectionId });
+
+  // Get a single collection
+});
+
+router.get('/:collectionId/movies', (req, res) => {
+  let { collectionId } = req.params;
+
+  console.log({ collectionId });
+
+  collectionService
+    .getCollectionMovies(collectionId)
+    .then((collection) => res.json(collection))
+    .catch((err) => res.json({ err }));
+});
+
+router.post('/:collectionId/movies', (req, res) => {
+  let { collectionId } = req.params;
+
+  console.log({ collectionId });
+
+  // Update current collection movie array
 });
 
 router.post('/', (req, res) => {
