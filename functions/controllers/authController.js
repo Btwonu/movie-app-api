@@ -50,10 +50,7 @@ router.post('/register', (req, res) => {
         email,
         createdAt: new Date().toISOString(),
         avatar: '',
-        friends: [],
         createdCollections: [],
-        followedCollections: [],
-        likedMovies: [],
       };
 
       return firestore.doc(`/users/${userId}`).set(userInfo);

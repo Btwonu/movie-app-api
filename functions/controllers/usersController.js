@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
 
 router.get('/profile', authMiddleware, (req, res) => {
   authService
-    .getProfile(req.user.username)
+    .getProfile(req.user.uid)
     .then((user) => res.json(user))
     .catch((err) => res.json(err));
 });
