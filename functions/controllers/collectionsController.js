@@ -2,6 +2,7 @@ const { Router } = require('express');
 const { admin, firestore } = require('../config/admin');
 
 const collectionService = require('../services/collectionService');
+const movieService = require('../services/movieService');
 
 const router = Router();
 
@@ -10,6 +11,7 @@ router.get('/', (req, res) => {
     .getAllCollections()
     .then((data) => {
       console.log('data', data);
+
       res.json(data);
     })
     .catch((err) => {
@@ -25,7 +27,15 @@ router.get('/:collectionId', (req, res) => {
   // Get a single collection
   collectionService
     .getOneCollection(collectionId)
-    .then((collection) => res.json(collection))
+    .then((collection) => {
+      let moviePromiseArray = collection.movies.map((movieId) =>
+        movieService.getOne(movieId)
+      );
+
+      Promise.all(moviePromiseArray).then((movies) => {
+        res.json({ collection, movies });
+      });
+    })
     .catch((err) => res.json({ err }));
 });
 
@@ -40,6 +50,17 @@ router.get('/:collectionId/movies', (req, res) => {
     .catch((err) => res.json({ err }));
 });
 
+router.post('/', (req, res) => {
+  let { title, description, userId } = req.body;
+
+  // validate data
+  collectionService
+    .createCollection(title, description, userId)
+    .then((collectionId) => {
+      res.json({ collectionId });
+    });
+});
+
 router.post('/:collectionId/movies/:movieId', (req, res) => {
   let { collectionId, movieId } = req.params;
 
@@ -52,20 +73,13 @@ router.post('/:collectionId/movies/:movieId', (req, res) => {
     .catch((err) => res.json({ err }));
 });
 
-router.post('/', (req, res) => {
-  let userId = 'AvJcedqhkSFRAjnho754sZRmZlTg';
-  let newCollection = {
-    title: req.body.title,
-    description: req.body.description,
-    movies: [],
-    creator: firestore.doc(`users/${userId}`),
-  };
+router.delete('/:collectionId', (req, res) => {
+  let { collectionId } = req.params;
 
-  // Add a collection creator
-  firestore
-    .collection(`/collections`)
-    .add(newCollection)
-    .then((doc) => res.json(doc.id));
+  collectionService
+    .deleteCollection(collectionId)
+    .then((data) => res.json(data))
+    .catch((err) => console.log(err));
 });
 
 module.exports = router;

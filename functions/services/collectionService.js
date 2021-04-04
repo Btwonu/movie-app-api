@@ -40,8 +40,29 @@ const getOneCollection = async (collectionId) => {
   }
 };
 
-const createCollection = () => {
-  return true;
+const createCollection = async (title, description, userId) => {
+  let newCollection = {
+    title,
+    description,
+    movies: [],
+    creator: firestore.doc(`users/${userId}`),
+  };
+
+  // Create the collection
+  let collectionDocRef = await firestore
+    .collection(`/collections`)
+    .add(newCollection);
+
+  // Link the collection to the creator
+  let userDocRef = firestore.doc(`/users/${userId}`);
+  let userDocSnapshot = await userDocRef.get();
+  let { createdCollections } = userDocSnapshot.data();
+
+  createdCollections.push(collectionDocRef);
+
+  await userDocRef.set({ createdCollections }, { merge: true });
+
+  return collectionDocRef.id;
 };
 
 const getCollectionMovies = async (collectionId) => {
@@ -76,10 +97,22 @@ const addMovieToCollection = async (collectionId, movieId) => {
   return docRef.set({ movies }, { merge: true });
 };
 
+const deleteCollection = (collectionId) => {
+  console.log('in delete function');
+
+  firestore
+    .doc(`/collections/${collectionId}`)
+    .get()
+    .then((result) => console.log(result.data()));
+
+  return firestore.doc(`/collections/${collectionId}`).delete();
+};
+
 module.exports = {
   getAllCollections,
   getCollectionMovies,
   addMovieToCollection,
   createCollection,
   getOneCollection,
+  deleteCollection,
 };
