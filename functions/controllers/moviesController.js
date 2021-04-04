@@ -2,7 +2,6 @@ const { Router } = require('express');
 
 // Services
 const movieService = require('../services/movieService');
-
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = Router();
@@ -12,15 +11,20 @@ router.get('/', (req, res) => {
   let { category, page, limit } = req.query;
 
   if (!category) {
-    movieService.getCategories().then((results) => {
-      res.json(results);
-    });
+    movieService
+      .getCategories()
+      .then((results) => {
+        res.json(results);
+      })
+      .catch((err) => res.json(err));
+  } else {
+    movieService
+      .getMovies(category, page, limit)
+      .then((movies) => {
+        res.json(movies);
+      })
+      .catch((err) => res.json(err));
   }
-
-  console.log({ category });
-  movieService.getMovies(category, page, limit).then((movies) => {
-    res.json(movies);
-  });
 });
 
 router.get('/popular', async (req, res) => {
@@ -45,6 +49,7 @@ router.get('/:movieId', (req, res) => {
   let { movieId } = req.params;
 
   movieService.getOne(movieId).then((data) => {
+    console.log('in then', data);
     res.json(data);
   });
 });

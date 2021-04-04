@@ -1,10 +1,5 @@
-// Firebase
 const functions = require('firebase-functions');
-const firebase = require('./config/firebase');
-const { admin, firestore } = require('./config/admin');
 const routes = require('./routes');
-
-firebase.auth().useEmulator('http://localhost:9099');
 
 // Server
 const express = require('express');

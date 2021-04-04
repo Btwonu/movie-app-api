@@ -7,9 +7,26 @@ const API_KEY = functions.config().tmdb.key;
 const BASE_URL = functions.config().tmdb.base_url;
 
 const getMovies = async (category, page, limit) => {
-  let urlString = `${BASE_URL}/movie/${category}?api_key=${API_KEY}&language=en-US&page=${page}`;
+  let urlString = BASE_URL + '/movie/' + category;
 
-  let movies = await axios.get(urlString);
+  const params = {
+    api_key: API_KEY,
+    language: 'en-US',
+  };
+
+  if (page) {
+    params.page = page;
+  }
+
+  let movies = null;
+
+  try {
+    movies = await axios.get(urlString, { params });
+  } catch (error) {
+    console.log('In axios catch');
+    console.log({ error });
+  }
+
   let moviesArr = movies.data.results.map(extractMovieInfo);
 
   if (limit) {
@@ -19,11 +36,11 @@ const getMovies = async (category, page, limit) => {
   return moviesArr;
 };
 
-const getCategories = () => {
+const getCategories = async () => {
   let promises = [
-    getMovies('popular', null, 4),
-    getMovies('top_rated', null, 4),
-    getMovies('upcoming', null, 4),
+    getMovies('popular', 1, 4),
+    getMovies('top_rated', 1, 4),
+    getMovies('upcoming', 1, 4),
   ];
 
   const mapper = {
@@ -74,10 +91,16 @@ const getUpcoming = async () => {
 };
 
 const getOne = async (id) => {
-  let urlString = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`;
+  console.log('from getOne', id);
+  let urlString = `${BASE_URL}/movie/${id}`;
 
-  let movie = await axios.get(urlString);
-  return movie.data;
+  const params = {
+    api_key: API_KEY,
+    languaage: 'en-US',
+  };
+
+  let movie = await axios.get(urlString, { params });
+  return extractMovieInfo(movie.data);
 };
 
 function extractMovieInfo(movie) {

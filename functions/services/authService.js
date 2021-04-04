@@ -30,9 +30,13 @@ const { firestore } = require('../config/admin');
 // };
 
 const getProfile = async (userId) => {
+  console.log({ userId });
   let userDoc = await firestore.doc(`/users/${userId}`).get();
 
+  console.log(userDoc.data());
+
   if (!userDoc.exists) {
+    console.log('I am inside getProfiles throw');
     throw { user: 'User does not exist' };
   }
 
@@ -42,6 +46,7 @@ const getProfile = async (userId) => {
     async (collectionDocRef) => {
       let queryDoc = await collectionDocRef.get();
       let collection = queryDoc.data();
+
       collection.collectionId = collectionDocRef.id;
       console.log({ collection });
 

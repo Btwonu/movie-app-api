@@ -1,6 +1,7 @@
 const { admin, firestore } = require('../config/admin');
 
 module.exports = (req, res, next) => {
+  console.log('in middleware', req.headers.authorization);
   let token;
 
   if (
@@ -31,6 +32,7 @@ module.exports = (req, res, next) => {
       return next();
     })
     .catch((err) => {
+      console.log('i broke in verifyidtoken catch');
       res.status(403).json({ error: err });
     });
 };

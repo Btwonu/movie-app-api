@@ -24,6 +24,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/profile', authMiddleware, (req, res) => {
+  console.log('get profile');
   authService
     .getProfile(req.user.uid)
     .then((user) => res.json(user))
