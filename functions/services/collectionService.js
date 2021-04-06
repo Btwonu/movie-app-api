@@ -33,11 +33,18 @@ const getOneCollection = async (collectionId) => {
     .doc(`/collections/${collectionId}`)
     .get();
 
-  if (queryDocSnapshot.exists) {
-    return queryDocSnapshot.data();
-  } else {
+  if (!queryDocSnapshot.exists) {
     throw "Collection doesn't exist";
   }
+
+  let collection = queryDocSnapshot.data();
+  let creator = await collection.creator.get();
+
+  collection.creatorId = creator.data().userId;
+
+  // console.log('collection', collection);
+
+  return collection;
 };
 
 const createCollection = async (title, description, userId) => {
@@ -97,13 +104,24 @@ const addMovieToCollection = async (collectionId, movieId) => {
   return docRef.set({ movies }, { merge: true });
 };
 
-const deleteCollection = (collectionId) => {
-  console.log('in delete function');
-
-  firestore
+const deleteCollection = async (collectionId) => {
+  let collectionQueryDocSnapshot = await firestore
     .doc(`/collections/${collectionId}`)
-    .get()
-    .then((result) => console.log(result.data()));
+    .get();
+
+  let creatorQueryDocSnapshot = await collectionQueryDocSnapshot
+    .data()
+    .creator.get();
+
+  let filteredCollections = creatorQueryDocSnapshot
+    .data()
+    .createdCollections.filter(
+      (collectionDocRef) => collectionDocRef.id !== collectionId
+    );
+
+  creatorQueryDocSnapshot.ref
+    .set({ createdCollections: filteredCollections }, { merge: true })
+    .then((res) => console.log('Set', res));
 
   return firestore.doc(`/collections/${collectionId}`).delete();
 };
