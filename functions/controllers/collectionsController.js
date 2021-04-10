@@ -39,17 +39,6 @@ router.get('/:collectionId', (req, res) => {
     .catch((err) => res.json({ err }));
 });
 
-router.get('/:collectionId/movies', (req, res) => {
-  let { collectionId } = req.params;
-
-  console.log({ collectionId });
-
-  collectionService
-    .getCollectionMovies(collectionId)
-    .then((collection) => res.json(collection))
-    .catch((err) => res.json({ err }));
-});
-
 router.post('/', (req, res) => {
   let { title, description, userId } = req.body;
 
@@ -59,6 +48,26 @@ router.post('/', (req, res) => {
     .then((collectionId) => {
       res.json({ collectionId });
     });
+});
+
+router.delete('/:collectionId', (req, res) => {
+  let { collectionId } = req.params;
+
+  collectionService
+    .deleteCollection(collectionId)
+    .then((data) => res.json(data))
+    .catch((err) => console.log(err));
+});
+
+router.get('/:collectionId/movies', (req, res) => {
+  let { collectionId } = req.params;
+
+  console.log({ collectionId });
+
+  collectionService
+    .getCollectionMovies(collectionId)
+    .then((collection) => res.json(collection))
+    .catch((err) => res.json({ err }));
 });
 
 router.post('/:collectionId/movies/:movieId', (req, res) => {
@@ -73,11 +82,11 @@ router.post('/:collectionId/movies/:movieId', (req, res) => {
     .catch((err) => res.json({ err }));
 });
 
-router.delete('/:collectionId', (req, res) => {
-  let { collectionId } = req.params;
+router.delete('/:collectionId/movies/:movieId', (req, res) => {
+  const { collectionId, movieId } = req.params;
 
   collectionService
-    .deleteCollection(collectionId)
+    .removeMovieFromCollection(collectionId, movieId)
     .then((data) => res.json(data))
     .catch((err) => console.log(err));
 });

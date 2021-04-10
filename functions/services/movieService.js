@@ -77,7 +77,7 @@ const getOne = async (id) => {
   let urlString = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`;
 
   let movie = await axios.get(urlString);
-  return movie.data;
+  return { ...movie.data, ...extractMovieInfo(movie.data) };
 };
 
 function extractMovieInfo(movie) {

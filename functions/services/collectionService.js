@@ -1,5 +1,4 @@
 const { firestore } = require('../config/admin');
-
 const movieService = require('./movieService');
 
 const getAllCollections = async () => {
@@ -42,7 +41,7 @@ const getOneCollection = async (collectionId) => {
 
   collection.creatorId = creator.data().userId;
 
-  // console.log('collection', collection);
+  console.log('collection', collection);
 
   return collection;
 };
@@ -104,6 +103,28 @@ const addMovieToCollection = async (collectionId, movieId) => {
   return docRef.set({ movies }, { merge: true });
 };
 
+const removeMovieFromCollection = async (collectionId, movieId) => {
+  let docRef = firestore.doc(`/collections/${collectionId}`);
+
+  let docSnapshot = await docRef.get();
+
+  if (!docSnapshot.exists) {
+    throw "Collection doesn't exist.";
+  }
+
+  let { movies } = docSnapshot.data();
+
+  if (!movies.includes(movieId)) {
+    throw 'Movie is not in collection.';
+  }
+
+  let filteredMovies = movies.filter((id) => id !== movieId);
+
+  console.log({ filteredMovies });
+
+  return docRef.set({ movies: filteredMovies }, { merge: true });
+};
+
 const deleteCollection = async (collectionId) => {
   let collectionQueryDocSnapshot = await firestore
     .doc(`/collections/${collectionId}`)
@@ -133,4 +154,5 @@ module.exports = {
   createCollection,
   getOneCollection,
   deleteCollection,
+  removeMovieFromCollection,
 };
