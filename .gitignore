@@ -72,3 +72,4 @@ data-backup/
 # Tasks
 TASKS.md
 service-account.json
+functions/service-account.json
