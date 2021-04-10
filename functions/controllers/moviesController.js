@@ -8,19 +8,39 @@ const authMiddleware = require('../middleware/authMiddleware');
 const router = Router();
 
 // Movie routes
+// router.get('/', (req, res) => {
+//   let { category, page, limit } = req.query;
+
+//   if (!category) {
+//     movieService.getCategories().then((results) => {
+//       res.json(results);
+//     });
+//   }
+
+//   console.log({ category });
+//   movieService.getMovies(category, page, limit).then((movies) => {
+//     res.json(movies);
+//   });
+// });
+
 router.get('/', (req, res) => {
   let { category, page, limit } = req.query;
 
   if (!category) {
-    movieService.getCategories().then((results) => {
-      res.json(results);
-    });
+    movieService
+      .getCategories()
+      .then((results) => {
+        res.json(results);
+      })
+      .catch((err) => res.json(err));
+  } else {
+    movieService
+      .getMovies(category, page, limit)
+      .then((movies) => {
+        res.json(movies);
+      })
+      .catch((err) => res.json(err));
   }
-
-  console.log({ category });
-  movieService.getMovies(category, page, limit).then((movies) => {
-    res.json(movies);
-  });
 });
 
 router.get('/popular', async (req, res) => {
