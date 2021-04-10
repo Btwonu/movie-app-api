@@ -129,25 +129,25 @@ const getUpcoming = async () => {
   return moviesArr;
 };
 
-// const getOne = async (id) => {
-//   let urlString = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`;
-
-//   let movie = await axios.get(urlString);
-//   return { ...movie.data, ...extractMovieInfo(movie.data) };
-// };
-
 const getOne = async (id) => {
-  console.log('from getOne', id);
-  let urlString = `${BASE_URL}/movie/${id}`;
+  let urlString = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`;
 
-  const params = {
-    api_key: API_KEY,
-    languaage: 'en-US',
-  };
-
-  let movie = await axios.get(urlString, { params });
-  return extractMovieInfo(movie.data);
+  let movie = await axios.get(urlString);
+  return { ...movie.data, ...extractMovieInfo(movie.data) };
 };
+
+// const getOne = async (id) => {
+//   console.log('from getOne', id);
+//   let urlString = `${BASE_URL}/movie/${id}`;
+
+//   const params = {
+//     api_key: API_KEY,
+//     languaage: 'en-US',
+//   };
+
+//   let movie = await axios.get(urlString, { params });
+//   return extractMovieInfo(movie.data);
+// };
 
 function extractMovieInfo(movie) {
   let imageUrl = 'https://image.tmdb.org/t/p/original' + movie.poster_path;
