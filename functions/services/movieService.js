@@ -6,10 +6,40 @@ const axios = require('axios').default;
 const API_KEY = functions.config().tmdb.key;
 const BASE_URL = functions.config().tmdb.base_url;
 
-const getMovies = async (category, page, limit) => {
-  let urlString = `${BASE_URL}/movie/${category}?api_key=${API_KEY}&language=en-US&page=${page}`;
+// const getMovies = async (category, page, limit) => {
+//   let urlString = `${BASE_URL}/movie/${category}?api_key=${API_KEY}&language=en-US&page=${page}`;
 
-  let movies = await axios.get(urlString);
+//   let movies = await axios.get(urlString);
+//   let moviesArr = movies.data.results.map(extractMovieInfo);
+
+//   if (limit) {
+//     return moviesArr.slice(0, limit);
+//   }
+
+//   return moviesArr;
+// };
+
+const getMovies = async (category, page, limit) => {
+  let urlString = BASE_URL + '/movie/' + category;
+
+  const params = {
+    api_key: API_KEY,
+    language: 'en-US',
+  };
+
+  if (page) {
+    params.page = page;
+  }
+
+  let movies = null;
+
+  try {
+    movies = await axios.get(urlString, { params });
+  } catch (error) {
+    console.log('In axios catch');
+    console.log({ error });
+  }
+
   let moviesArr = movies.data.results.map(extractMovieInfo);
 
   if (limit) {
