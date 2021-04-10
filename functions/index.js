@@ -5,8 +5,10 @@ const { admin, firestore } = require('./config/admin');
 const routes = require('./routes');
 const errorHandler = require('./middleware/errorHandler');
 
-firebase.auth().useEmulator('http://localhost:9099');
-// firestore.useEmulator('localhost', 8080);
+if (process.env.FUNCTIONS_EMULATOR) {
+  firebase.auth().useEmulator('http://localhost:9099');
+  // firestore.useEmulator('localhost', 8080);
+}
 
 // Server
 const express = require('express');

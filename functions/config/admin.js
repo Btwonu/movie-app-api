@@ -1,9 +1,14 @@
 const admin = require('firebase-admin');
-const serviceAccount = require('../service-account.json');
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+if (process.env.FUNCTIONS_EMULATOR) {
+  const serviceAccount = require('../service-account.json');
+
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+} else {
+  admin.initializeApp();
+}
 
 const firestore = admin.firestore();
 
