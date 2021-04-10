@@ -49,11 +49,37 @@ const getMovies = async (category, page, limit) => {
   return moviesArr;
 };
 
-const getCategories = () => {
+// const getCategories = () => {
+//   let promises = [
+//     getMovies('popular', null, 4),
+//     getMovies('top_rated', null, 4),
+//     getMovies('upcoming', null, 4),
+//   ];
+
+//   const mapper = {
+//     0: 'popular',
+//     1: 'top_rated',
+//     2: 'upcoming',
+//   };
+
+//   return Promise.all(promises).then((results) => {
+//     return results.map((movies, index) => {
+//       let category = mapper[index];
+
+//       return {
+//         name: category,
+//         movies,
+//         url: `/movies/categories/${category}`,
+//       };
+//     });
+//   });
+// };
+
+const getCategories = async () => {
   let promises = [
-    getMovies('popular', null, 4),
-    getMovies('top_rated', null, 4),
-    getMovies('upcoming', null, 4),
+    getMovies('popular', 1, 4),
+    getMovies('top_rated', 1, 4),
+    getMovies('upcoming', 1, 4),
   ];
 
   const mapper = {
