@@ -27,25 +27,25 @@ router.get('/', (req, res) => {
   }
 });
 
-router.get('/popular', async (req, res) => {
+router.get('/popular', authMiddleware, async (req, res) => {
   movieService.getPopular().then((movies) => {
     res.json(movies);
   });
 });
 
-router.get('/top_rated', (req, res) => {
+router.get('/top_rated', authMiddleware, (req, res) => {
   movieService.getTopRated().then((movies) => {
     res.json(movies);
   });
 });
 
-router.get('/upcoming', (req, res) => {
+router.get('/upcoming', authMiddleware, (req, res) => {
   movieService.getUpcoming().then((movies) => {
     res.json(movies);
   });
 });
 
-router.get('/:movieId', (req, res) => {
+router.get('/:movieId', authMiddleware, (req, res) => {
   let { movieId } = req.params;
 
   movieService.getOne(movieId).then((data) => {
